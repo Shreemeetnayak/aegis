@@ -1,0 +1,115 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+env:
+  NODE_VERSION: '20.x'
+
+jobs:
+  backend-tests:
+    name: Backend Tests
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: backend/package-lock.json
+      - run: npm ci
+      - run: npm test
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  frontend-build:
+    name: Frontend Build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci
+      - run: npm run build
+      - uses: actions/upload-artifact@v4
+        with:
+          name: frontend-dist
+          path: frontend/dist/
+          retention-days: 7
+
+  security-scan:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - run: npm ci
+        working-directory: ./backend
+      - run: npm ci
+        working-directory: ./frontend
+      - run: npm audit --audit-level=moderate
+        working-directory: ./backend
+        continue-on-error: true
+      - run: npm audit --audit-level=moderate
+        working-directory: ./frontend
+        continue-on-error: true
+      - run: |
+          if grep -r "ghp_\|github_pat_\|AIza\|sk-\|xoxb-" --include="*.js" --include="*.jsx" --include="*.ts" --include="*.tsx" --exclude-dir=node_modules .; then
+            echo "Potential secrets found in code!"
+            exit 1
+          fi
+          echo "No hardcoded secrets detected."
+
+  lint:
+    name: Code Quality
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - run: npm ci
+        working-directory: ./backend
+      - run: npm ci
+        working-directory: ./frontend
+      - run: npx prettier --check "src/**/*.js"
+        working-directory: ./backend
+        continue-on-error: true
+      - run: npx prettier --check "src/**/*.{js,jsx,css}"
+        working-directory: ./frontend
+        continue-on-error: true
+
+  build-and-test:
+    name: Full Build & Test
+    needs: [backend-tests, frontend-build, security-scan, lint]
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - run: |
+          echo "Backend tests: ${{ needs.backend-tests.result }}"
+          echo "Frontend build: ${{ needs.frontend-build.result }}"
+          echo "Security scan: ${{ needs.security-scan.result }}"
+          echo "Lint: ${{ needs.lint.result }}"
+          if [[ "${{ needs.backend-tests.result }}" != "success" ]] ||
+             [[ "${{ needs.frontend-build.result }}" != "success" ]] ||
+             [[ "${{ needs.security-scan.result }}" != "success" ]] ||
+             [[ "${{ needs.lint.result }}" != "success" ]]; then
+            echo "One or more required checks failed!"
+            exit 1
+          fi
+          echo "All checks passed!"
+      - run: echo "✅ CI Pipeline completed successfully!"
