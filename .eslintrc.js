@@ -5,9 +5,7 @@ module.exports = {
     es2021: true,
     node: true,
   },
-  extends: [
-    'eslint:recommended',
-  ],
+  extends: ['eslint:recommended'],
   parserOptions: {
     ecmaVersion: 12,
     sourceType: 'module',
@@ -29,10 +27,7 @@ module.exports = {
       env: {
         browser: true,
       },
-      extends: [
-        'eslint:recommended',
-        'plugin:react/recommended',
-      ],
+      extends: ['eslint:recommended', 'plugin:react/recommended'],
       plugins: ['react'],
       parserOptions: {
         ecmaFeatures: {
@@ -47,9 +42,5 @@ module.exports = {
       },
     },
   ],
-  ignorePatterns: [
-    'node_modules/',
-    'dist/',
-    'backend/data/',
-  ],
+  ignorePatterns: ['node_modules/', 'dist/', 'backend/data/'],
 };
