@@ -102,3 +102,5 @@ Can be deployed to Vercel (frontend) + Render/Heroku (backend), Docker, or tradi
 ## License
 
 MIT License
+## Release v1.0.0
+See [GitHub Release](https://github.com/Shreemeetnayak/aegis/releases/tag/v1.0.0) for downloadable assets and release notes.
