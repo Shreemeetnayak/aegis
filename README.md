@@ -4,103 +4,109 @@
 
 **Mission:** Build an AI platform that understands repositories, deploys applications, diagnoses failures, and helps developers fix them using retrieval, reasoning, and intelligent automation.
 
-## Features
+---
 
-### MVP Features (Version 1)
-- Connect GitHub repositories
-- Repository ingestion and analysis
-- Repository structure analysis
-- Framework and language detection
-- Docker deployment detection
-- Deployment status tracking
-- AI-powered log explanation
-- Beginner-friendly error explanations
-- Suggested fixes for common issues
+## 🚀 Quick Start (Easiest Way)
 
-### AI-Powered Features
-- Repository understanding and codebase indexing
-- Embeddings and vector search (RAG) capabilities
-- Source code retrieval and analysis
-- Deployment failure reasoning and root cause analysis
-- Runtime failure analysis
-- Environment variable and configuration analysis
-- Dependency conflict detection
-- Security issue identification
-- AI-generated deployment reports with confidence scoring
+### Windows Users
+**Double-click `install-and-run.bat`** — that's it! It will:
+1. Check/install Node.js automatically
+2. Install all dependencies
+3. Help you add your GitHub token
+4. Start the app and open your browser
 
-## Installation
-
-### Prerequisites
-- Node.js >= 18.0.0
-- npm >= 9.0.0
-- GitHub Personal Access Token
-
-### Backend Setup
+### Mac / Linux Users
+Open terminal in the Aegis folder and run:
 ```bash
-git clone https://github.com/yourusername/aegis.git
-cd aegis
-cd backend
-npm install
-cp .env.example .env
-# Edit .env to add your GitHub token
+./install-and-run.sh
+```
+
+---
+
+## 📋 What You Need
+
+| Requirement | How to Get It |
+|-------------|---------------|
+| **Node.js 18+** | Auto-installed by scripts above, or download from [nodejs.org](https://nodejs.org/) |
+| **GitHub Token** | Get one free at [github.com/settings/tokens](https://github.com/settings/tokens) (no special permissions needed) |
+
+---
+
+## 🎯 What It Does
+
+- **Analyze any GitHub repo** — paste a URL, get instant insights
+- **Explain deployment errors** — paste cryptic logs, get plain English explanations
+- **Detect frameworks, languages, Docker, CI/CD, tests** — automatically
+- **Check deployment readiness** — know before you deploy
+- **AI-powered suggestions** — fixes for common issues
+
+---
+
+## 🖥️ Manual Start (If Scripts Don't Work)
+
+```bash
+# 1. Install dependencies (one-time)
+npm run install-all
+
+# 2. Configure GitHub token
+cp backend/.env.example backend/.env
+# Edit backend/.env and add your GITHUB_TOKEN
+
+# 3. Start both servers
 npm run dev
-# Server runs on http://localhost:5000
 ```
 
-### Frontend Setup
+Then open: **http://localhost:5173**
+
+---
+
+## 🐳 Docker (Alternative)
+
 ```bash
-cd ../frontend
-npm install
-npm run dev
-# Frontend runs on http://localhost:5173
+# Copy and edit environment
+cp backend/.env.example backend/.env
+# Edit backend/.env with your GITHUB_TOKEN
+
+# Start everything
+docker-compose up -d
+
+# Frontend: http://localhost
+# Backend API: http://localhost:5000
 ```
 
-### Environment Variables
-Create `.env` in backend directory:
+---
+
+## 📁 Project Structure
+
 ```
-PORT=5000
-NODE_ENV=development
-GITHUB_TOKEN=your_github_personal_access_token
-FRONTEND_URL=http://localhost:5173
-```
-
-## Usage
-
-### Web Interface
-1. Start backend and frontend servers
-2. Navigate to http://localhost:5173
-3. Enter a GitHub repository URL
-4. Click "Analyze Repository"
-5. View detailed report with insights
-
-### API Direct
-```bash
-curl -X POST http://localhost:5000/api/analyze \
-  -H "Content-Type: application/json" \
-  -d '{"repositoryUrl": "https://github.com/owner/repo"}'
+aegis/
+├── backend/          # Node.js/Express API server
+├── frontend/         # React 18 + Vite dashboard
+├── install-and-run.bat    # Windows one-click installer
+├── install-and-run.sh     # Mac/Linux one-click installer
+├── start.bat              # Windows dev start (needs Node.js)
+├── start.sh               # Mac/Linux dev start (needs Node.js)
+├── docker-compose.yml     # Docker deployment
+└── package.json           # Root workspace config
 ```
 
-## Development
+---
 
-### Running Tests
-```bash
-cd backend
-npm test
-```
+## ❓ Troubleshooting
 
-## CI/CD Pipeline
+| Problem | Solution |
+|---------|----------|
+| "Node.js not found" | Run `install-and-run.bat` / `.sh` (auto-installs) |
+| "Port 5000/5173 in use" | Close other apps using those ports, or edit `.env` |
+| "GitHub token invalid" | Get a new token at [github.com/settings/tokens](https://github.com/settings/tokens) |
+| Scripts won't run | Right-click → "Run as Administrator" (Windows) or `chmod +x *.sh` (Mac/Linux) |
 
-GitHub Actions workflow included in `.github/workflows/ci.yml`:
-- Runs tests on push/PR
-- Builds frontend for production
-- Security scanning (planned)
+---
 
-## Deployment
+## 📄 License
 
-Can be deployed to Vercel (frontend) + Render/Heroku (backend), Docker, or traditional VPS.
+MIT License — see [LICENSE](LICENSE) for details.
 
-## License
+---
 
-MIT License
-## Release v1.0.0
-See [GitHub Release](https://github.com/Shreemeetnayak/aegis/releases/tag/v1.0.0) for downloadable assets and release notes.
+**Built for developers who want to understand their code better.**
